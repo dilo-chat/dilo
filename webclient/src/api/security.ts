@@ -1,4 +1,5 @@
 import { Event, EventMeta } from '../interfaces'
+import env from '../helpers/env';
 
 interface EncryptedEventMeta extends EventMeta, AesGcmParams {
 }
@@ -17,7 +18,7 @@ export const encryptEvent = async (secretKey: CryptoKey, event: Event): Promise<
   const encryptedEventMeta: EncryptedEventMeta = {
     e: "MESSAGE_ENCRYPTED",
     ts: new Date().getTime(),
-    name: "AES-GCM",
+    name: env.SECURITY_ENCRYPTION_ALG_NAME,
     iv
   }
   const encryptedEventData = await window.crypto.subtle.encrypt(encryptedEventMeta, secretKey, encodedEvent);
@@ -33,4 +34,12 @@ export const decryptEvent = async (secretKey: CryptoKey, { meta, data }: Encrypt
   const decryptedEvent = await window.crypto.subtle.decrypt(meta, secretKey, encode(data));
   const eventJsonString = decode(decryptedEvent);
   return JSON.parse(eventJsonString);
+}
+
+export const generateKey = () => {
+  const algorithm: EcKeyGenParams = {
+    name: env.SECURITY_DERIVE_ALG_NAME,
+    namedCurve: env.SECURITY_DERIVE_ALG_NAMED_CURVE
+  }
+  return window.crypto.subtle.generateKey(algorithm, false, ['deriveKey']);
 }
