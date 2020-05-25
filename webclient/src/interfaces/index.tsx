@@ -6,18 +6,21 @@ export interface Message {
   createdAt: string;
 }
 
-export type EventType = 'CONNECTIONS_COUNT_CHANGED'
+export type EventType = 'MESSAGE_ENCRYPTED'
+  | 'MESSAGE_SENT'
+  | 'CONNECTIONS_COUNT_CHANGED'
   | 'CONNECTION_CONNECTED'
   | 'CONNECTION_DISCONNECTED'
-  | 'MESSAGE_SENT'
   | 'ROOM_JOINED'
   | 'ROOM_LEFT';
 
+export interface EventMeta {
+  e: EventType;
+  ts: number;
+}
+
 export interface Event {
-  meta: {
-    e: EventType;
-    ts: number;
-  };
+  meta: EventMeta;
   data: any;
 }
 
