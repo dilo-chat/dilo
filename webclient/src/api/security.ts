@@ -36,6 +36,24 @@ export const decryptEvent = async (secretKey: CryptoKey, { meta, data }: Encrypt
   return JSON.parse(eventJsonString);
 }
 
+export const deriveSecretKey = (localPrivateKey: CryptoKey, remotePublicKey: CryptoKey) => {
+  const deriveParams: EcdhKeyDeriveParams = {
+    name: env.SECURITY_DERIVE_ALG_NAME,
+    public: remotePublicKey
+  }
+  const encryptionParams: AesDerivedKeyParams = {
+    name: env.SECURITY_ENCRYPTION_ALG_NAME,
+    length: parseInt(env.SECURITY_ENCRYPTION_KEY_LENGTH)
+  }
+  return window.crypto.subtle.deriveKey(
+    deriveParams,
+    localPrivateKey,
+    encryptionParams,
+    false,
+    ['encrypt', 'decrypt']
+  );
+}
+
 export const generateKey = () => {
   const algorithm: EcKeyGenParams = {
     name: env.SECURITY_DERIVE_ALG_NAME,
