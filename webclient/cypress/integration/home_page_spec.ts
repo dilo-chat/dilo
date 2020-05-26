@@ -1,6 +1,6 @@
 describe('My First Test', () => {
   it('Visit dilo!', () => {
-    cy.visit('http://localhost:1234/')
+    cy.visit('/')
     cy.contains('Get Started').click()
 
     cy.url().should('include', '/?j=')
