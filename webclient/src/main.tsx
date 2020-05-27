@@ -2,6 +2,7 @@ import * as React from 'react'
 import { render } from 'react-dom'
 import App from './App'
 
+import env from './helpers/env'
 import uuid from './helpers/uuid'
 import { getRoomToJoin } from './helpers/connection'
 
@@ -12,7 +13,7 @@ import ConnectionStatus from './components/ConnectionStatus'
 const roomId = getRoomToJoin(window.location.search) || undefined;
 const rootElement = document.getElementById("root")
 const authorId = uuid()
-const serverUrl = process.env.SERVER_URL
+const serverUrl = env.SERVER_URL
 
 if (!serverUrl) {
   alert('Error in configuration')
