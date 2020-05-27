@@ -7,7 +7,7 @@ import {
   decryptEvent
 } from './security'
 
-describe('security', () => {
+describe.skip('security', () => {
   it('should encrypt and decrypt a message with two different keys', async () => {
     // based on https://github.com/mdn/dom-examples/blob/master/web-crypto/derive-key/ecdh.js
     const alicesKeyPair = await generateKey();
