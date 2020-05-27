@@ -13,6 +13,7 @@ const encode = (plaintext: string) => new TextEncoder().encode(plaintext);
 const decode = (encoded: ArrayBuffer) => new TextDecoder().decode(encoded);
 
 export const encryptEvent = async (secretKey: CryptoKey, event: Event): Promise<EncryptedEvent> => {
+  console.log(secretKey.algorithm.name, env.SECURITY_ENCRYPTION_ALG_NAME);
   const iv = window.crypto.getRandomValues(new Uint8Array(96));
   const encodedEvent = encode(JSON.stringify(event));
   const encryptedEventMeta: EncryptedEventMeta = {
@@ -21,13 +22,18 @@ export const encryptEvent = async (secretKey: CryptoKey, event: Event): Promise<
     name: env.SECURITY_ENCRYPTION_ALG_NAME,
     iv
   }
-  const encryptedEventData = await window.crypto.subtle.encrypt(encryptedEventMeta, secretKey, encodedEvent);
-  const encryptedEvent: EncryptedEvent = {
-    meta: encryptedEventMeta,
-    data: decode(encryptedEventData)
-  }
+  try {
+    const encryptedEventData = await window.crypto.subtle.encrypt(encryptedEventMeta, secretKey, encodedEvent);
+    const encryptedEvent: EncryptedEvent = {
+      meta: encryptedEventMeta,
+      data: decode(encryptedEventData)
+    }
 
-  return encryptedEvent;
+    return encryptedEvent;
+  } catch (error) {
+    console.log(error)
+    throw error;
+  }
 }
 
 export const decryptEvent = async (secretKey: CryptoKey, { meta, data }: EncryptedEvent): Promise<Event> => {

@@ -39,9 +39,9 @@ const EventProvider: React.FC<Props> = ({ connection, children }) => {
   };
   React.useEffect(listenForConnectionOpen, [isOpen, buffer]);
 
-  const notifyEvent = (event: MessageEvent) => {
+  const notifyEvent = async (event: MessageEvent) => {
     try {
-      const serverEvent = decodePayload(event.data);
+      const serverEvent = await decodePayload(event.data);
       const receivedEventType = serverEvent.meta.e;
       listeners.filter(({ eventType }) => eventType == receivedEventType)
         .forEach(listener => listener.callback(serverEvent))
@@ -55,9 +55,9 @@ const EventProvider: React.FC<Props> = ({ connection, children }) => {
   }
   React.useEffect(listenForConnectionMessages, [listeners])
 
-  const send = (eventType: EventType, payload: any) => {
+  const send = async (eventType: EventType, payload: any) => {
     const event = buildEvent(eventType, payload);
-    const data = encodeEvent(event);
+    const data = await encodeEvent(event);
     if (isOpen) {
       connection.send(data);
     } else {
