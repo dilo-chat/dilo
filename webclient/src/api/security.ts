@@ -1,19 +1,10 @@
-import { Event, EventMeta } from '../interfaces'
+import { Event, EncryptedEventMeta, EncryptedEvent } from '../interfaces'
 import env from '../helpers/env';
-
-interface EncryptedEventMeta extends EventMeta, AesGcmParams {
-}
-
-interface EncryptedEvent extends Event {
-  meta: EncryptedEventMeta;
-  data: string;
-}
 
 const encode = (plaintext: string) => new TextEncoder().encode(plaintext);
 const decode = (encoded: ArrayBuffer) => new TextDecoder().decode(encoded);
 
 export const encryptEvent = async (secretKey: CryptoKey, event: Event): Promise<EncryptedEvent> => {
-  console.log(secretKey.algorithm.name, env.SECURITY_ENCRYPTION_ALG_NAME);
   const iv = window.crypto.getRandomValues(new Uint8Array(96));
   const encodedEvent = encode(JSON.stringify(event));
   const encryptedEventMeta: EncryptedEventMeta = {
@@ -24,9 +15,11 @@ export const encryptEvent = async (secretKey: CryptoKey, event: Event): Promise<
   }
   try {
     const encryptedEventData = await window.crypto.subtle.encrypt(encryptedEventMeta, secretKey, encodedEvent);
+    console.log('encrypted ciphertext', encryptedEventData)
+    console.log('encrypted ciphertext decoded', decode(encryptedEventData))
     const encryptedEvent: EncryptedEvent = {
       meta: encryptedEventMeta,
-      data: decode(encryptedEventData)
+      data: encryptedEventData
     }
 
     return encryptedEvent;
@@ -37,8 +30,14 @@ export const encryptEvent = async (secretKey: CryptoKey, event: Event): Promise<
 }
 
 export const decryptEvent = async (secretKey: CryptoKey, { meta, data }: EncryptedEvent): Promise<Event> => {
-  const decryptedEvent = await window.crypto.subtle.decrypt(meta, secretKey, encode(data));
+  console.log(meta, data)
+  const decryptedEvent = await window.crypto.subtle.decrypt({
+    name: meta.name,
+    iv: meta.iv
+  }, secretKey, data);
+  console.log(decryptedEvent);
   const eventJsonString = decode(decryptedEvent);
+  console.log(eventJsonString);
   return JSON.parse(eventJsonString);
 }
 
