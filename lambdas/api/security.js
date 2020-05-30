@@ -3,8 +3,8 @@ const crypto = require('crypto')
 const log = require('../helpers/log')
 const { buildEvent, emitEvent, EventTypes } = require('./event')
 
-const encoding = 'utf8'
-const format = 'uncompressed'
+const encoding = 'base64'
+const format = 'compressed'
 
 exports.enchangeKeys = async(requestContext, { data, meta }) => {
   const ecdh = generateKeyPair();
@@ -27,8 +27,8 @@ const generateKeyPair = () => {
   return ecdh;
 }
 
-const encryptEvent
-const decryptEvent
+// const encryptEvent
+// const decryptEvent
 const deriveSecretKey = (ecdh, remotePublicKey) => {
   try {
     return ecdh.computeSecret(remotePublicKey, encoding, encoding);
@@ -37,3 +37,6 @@ const deriveSecretKey = (ecdh, remotePublicKey) => {
     throw error;
   }
 }
+
+exports.generateKeyPair = generateKeyPair;
+exports.deriveSecretKey = deriveSecretKey;
