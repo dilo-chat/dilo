@@ -7,6 +7,7 @@ const EventTypes = {
   MESSAGE_SENT: 'MESSAGE_SENT',
   ROOM_JOINED: 'ROOM_JOINED',
   ROOM_LEFT: 'ROOM_LEFT'
+  SECURITY_KEYS_EXCHANGE: 'SECURITY_KEYS_EXCHANGE'
 };
 exports.EventTypes = EventTypes;
 
