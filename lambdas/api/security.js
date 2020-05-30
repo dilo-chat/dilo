@@ -1,18 +1,22 @@
 const { put } = require('./storage');
 const crypto = require('crypto')
+const log = require('../helpers/log')
+const { buildEvent, emitEvent, EventTypes } = require('./event')
 
 const encoding = 'utf8'
 const format = 'uncompressed'
 
-exports.enchangeKeys = async({ connectionId }, { data, meta }) => {
+exports.enchangeKeys = async(requestContext, { data, meta }) => {
   const ecdh = generateKeyPair();
   const remotePublicKey = meta.publicKey;
-  const roomId = meta.roomId;
-  const sharedSecretKey = deriveSecretKey(ecdh, remotePublicKey);
-  const publicKey = ecdh.getPublicKey(encoding);
-  // store sharedSecretKey. It will be used to en/decrypt
-  // send publicKey so that remote can generate the sharedSecretKey
+  const { connectionId } = requestContext;
+  const { roomId } = meta;
+  const sharedKey = deriveSecretKey(ecdh, remotePublicKey);
   await put({ roomId, connectionId, sharedKey })
+
+  const publicKey = ecdh.getPublicKey(encoding);
+  const exchangeKeysEvent = buildEvent(EventTypes.SECURITY_KEYS_EXCHANGE, { publicKey, roomId });
+  await emitEvent(requestContext, exchangeKeysEvent, [connectionId]);
 }
 
 // https://security.stackexchange.com/a/78624
@@ -26,5 +30,10 @@ const generateKeyPair = () => {
 const encryptEvent
 const decryptEvent
 const deriveSecretKey = (ecdh, remotePublicKey) => {
-  return ecdh.computeSecret(remotePublicKey, encoding, encoding);
+  try {
+    return ecdh.computeSecret(remotePublicKey, encoding, encoding);
+  } catch (error) {
+    log(`Error while deriving shared key: ` + error.message);
+    throw error;
+  }
 }
