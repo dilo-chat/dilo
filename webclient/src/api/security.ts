@@ -59,7 +59,7 @@ export const deriveSecretKey = (localPrivateKey: CryptoKey, remotePublicKey: Cry
   );
 }
 
-export const generateKey = () => {
+export const generateKeyPair = () => {
   const algorithm: EcKeyGenParams = {
     name: env.SECURITY_DERIVE_ALG_NAME,
     namedCurve: env.SECURITY_DERIVE_ALG_NAMED_CURVE

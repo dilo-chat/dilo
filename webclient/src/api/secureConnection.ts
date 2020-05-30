@@ -14,7 +14,7 @@ type Listeners = {
   message: ((event: Event) => void)[];
 }
 
-import { generateKey, encryptEvent, decryptEvent, deriveSecretKey } from './security'
+import { generateKeyPair, encryptEvent, decryptEvent, deriveSecretKey } from './security'
 import { buildEvent, encodePayload, decodePayload } from './eventEmitter'
 import { Event, EncryptedEvent, SecurityKeysExchangeEvent } from '../interfaces';
 
@@ -56,7 +56,7 @@ export class SecureConnection implements WebSocketLike {
   }
 
   private async startKeysExchange() {
-    this.keyPair = await generateKey();
+    this.keyPair = await generateKeyPair();
 
     const keysExchangeEvent = buildEvent('SECURITY_KEYS_EXCHANGE', {
       publicKey: this.keyPair.publicKey
