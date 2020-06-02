@@ -4,7 +4,7 @@ const log = require('../helpers/log')
 const { buildEvent, emitEvent, EventTypes } = require('./event')
 
 const encoding = 'base64'
-const format = 'compressed'
+const format = 'uncompressed'
 
 exports.enchangeKeys = async(requestContext, { data, meta }) => {
   const ecdh = generateKeyPair();

@@ -3,7 +3,7 @@ import '../styles/Home.css'
 import Chat from '../components/Chat'
 import { RoomContext } from '../context/roomContext';
 import { clsn } from '../helpers/color'
-import { getRoomUrl } from '../helpers/connection'
+import { example } from '../api/security';
 
 
 const Navbar: React.FC = () => {
@@ -11,7 +11,7 @@ const Navbar: React.FC = () => {
   return (
     <div className="navbar">
       <a className="link" href="/">dilo</a>
-      <a className="link" href={getNewRoomUrl()}>new chat</span>
+      <a className="link" href={getNewRoomUrl()}>new chat</a>
     </div>
   );
 }
@@ -110,6 +110,7 @@ const Section: React.FC<{white?: boolean}> = ({ white, children }) => {
 }
 
 export const Home: React.FC = () => {
+  example();
   return (
     <div className="home">
       <Section white>
