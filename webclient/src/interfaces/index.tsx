@@ -38,6 +38,7 @@ export interface MessageReaction {
 export type EventType = 'CONNECTIONS_COUNT_CHANGED'
   | 'CONNECTION_CONNECTED'
   | 'CONNECTION_DISCONNECTED'
+  | 'MESSAGE_BATCH_SENT'
   | 'MESSAGE_SENT'
   | 'MESSAGE_REPLY_SENT'
   | 'MESSAGE_REACTION_SENT'
@@ -56,7 +57,9 @@ export interface Event {
 export interface MessageEvent extends Event {
   data: Message;
 }
-
+export interface MessageBatchSentEvent extends Event {
+  data: Message[];
+}
 export interface MessageReplySentEvent extends MessageEvent {
   data: MessageReply;
 }

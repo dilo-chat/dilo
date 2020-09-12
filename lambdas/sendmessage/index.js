@@ -1,11 +1,14 @@
 const { info, error } = require('../helpers/log').buildLogger('HANDLER/SEND_MESSAGE');
 const { joinRoom, leaveRoom } = require('../api/room')
-const { broadcastEventInRoom } = require('../api/message')
-const { EventTypes } = require('../api/event')
+const { broadcastEventInRoom, saveMessage, latestMessagesInRoom } = require('../api/message')
+const { buildEvent, EventTypes } = require('../api/event')
 
-const handleJoinRoom = (lambdaEvent, systemEvent) => {
+const handleJoinRoom = async (lambdaEvent, systemEvent) => {
   const { roomId } = systemEvent.data;
-  return joinRoom(lambdaEvent.requestContext, roomId);
+  await joinRoom(lambdaEvent.requestContext, roomId);
+  const messages = await latestMessagesInRoom(roomId);
+  const messagesSystemEvent = buildEvent(EventTypes.MESSAGE_BATCH_SENT, messages);
+  return broadcastEventInRoom(lambdaEvent.requestContext, messagesSystemEvent);
 }
 
 const handleLeaveRoom = (lambdaEvent, systemEvent) => {
@@ -14,6 +17,7 @@ const handleLeaveRoom = (lambdaEvent, systemEvent) => {
 }
 
 const handleEventInRoom = (lambdaEvent, systemEvent) => {
+  await saveMessage(lambdaEvent.requestContext, systemEvent);
   return broadcastEventInRoom(lambdaEvent.requestContext, systemEvent);
 }
 
