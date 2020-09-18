@@ -11,6 +11,7 @@
     "type-check:watch": "tsc --noEmit --watch"
   },
   "dependencies": {
+    "@stripe/stripe-js": "^1.9.0",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
     "react-router-dom": "^5.2.0"
