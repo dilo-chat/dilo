@@ -10,6 +10,7 @@ import { ConnectionProvider } from './context/connectionContext'
 
 import ConnectionStatus from './components/ConnectionStatus'
 import { Rooms } from './pages/Rooms';
+import { Checkout } from './pages/Checkout';
 
 const rootElement = document.getElementById("root")
 const serverUrl = process.env.SERVER_URL || 'wss://at7ejxghod.execute-api.eu-west-2.amazonaws.com/Prod'
@@ -36,7 +37,12 @@ render(
         path="/r/:roomId"
         render={(props) => <App roomId={props.match.params.roomId} />}
       />
-    </ConnectionProvider>
+      <Route
+        exact={true}
+        path="/checkout"
+        render={(props) => <Checkout />}
+      />
+     </ConnectionProvider>
   </BrowserRouter>,
   rootElement
 )
