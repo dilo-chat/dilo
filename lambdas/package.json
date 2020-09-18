@@ -6,6 +6,7 @@
   "author": "jonathanmv",
   "license": "MIT",
   "dependencies": {
-    "aws-sdk": "^2.655.0"
+    "aws-sdk": "^2.655.0",
+    "stripe": "^8.96.0"
   }
 }
