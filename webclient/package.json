@@ -11,6 +11,7 @@
     "type-check:watch": "tsc --noEmit --watch"
   },
   "dependencies": {
+    "@stripe/stripe-js": "^1.9.0",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
     "react-router-dom": "^5.2.0"
@@ -22,7 +23,7 @@
     "@types/react-router-dom": "^5.1.5",
     "cypress": "^4.7.0",
     "parcel-bundler": "^1.10.3",
-    "stylus": "^0.54.7",
+    "stylus": "^0.54.8",
     "typescript": "^3.1.4"
   }
 }

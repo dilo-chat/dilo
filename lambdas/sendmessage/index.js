@@ -2,6 +2,7 @@ const { info, error } = require('../helpers/log').buildLogger('HANDLER/SEND_MESS
 const { joinRoom, leaveRoom } = require('../api/room')
 const { saveMessage, broadcastEventInRoom, latestMessagesInRoom, sendLatestMessages } = require('../api/message')
 const { buildEvent, EventTypes, emitEvent } = require('../api/event')
+const { createSession } = require('../api/checkout')
 
 const handleJoinRoom = async (lambdaEvent, systemEvent) => {
   const { roomId } = systemEvent.data;
@@ -24,9 +25,17 @@ const handleLeaveRoom = (lambdaEvent, systemEvent) => {
 }
 
 const handleEventInRoom = async (lambdaEvent, systemEvent) => {
-  console.log(systemEvent)
   await saveMessage(lambdaEvent.requestContext, systemEvent);
   return broadcastEventInRoom(lambdaEvent.requestContext, systemEvent);
+}
+
+const handleCheckoutSessionRequested = async (lambdaEvent) => {
+  const session = await createSession();
+  const eventType = EventTypes.CHECKOUT_SESSION_CREATED;
+  const data = { sessionId: session.id };
+  const systemEvent = buildEvent(eventType, data);
+  const connectionId = lambdaEvent.requestContext.connectionId);
+  return emitEvent(requestContext, systemEvent, connectionId);
 }
 
 const handlers = {
@@ -36,6 +45,7 @@ const handlers = {
   [EventTypes.MESSAGE_REPLY_SENT]: handleEventInRoom,
   [EventTypes.MESSAGE_REACTION_SENT]: handleEventInRoom,
   [EventTypes.MESSAGE_DELETED]: handleEventInRoom,
+  [EventTypes.CHECKOUT_SESSION_REQUESTED]: handleCheckoutSessionRequested,
 };
 
 module.exports = async event => {
