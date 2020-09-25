@@ -24,5 +24,10 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: yarn && yarn build
+    - name: Build
+      run: yarn && yarn build
       working-directory: webclient
+    - name: Deploy to firebase
+      run: yarn && node_modules/.bin/firebase deploy --project dilo-dev --token=$FIREBASE_TOKEN
+      env:
+        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
