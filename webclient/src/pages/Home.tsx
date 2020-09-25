@@ -8,6 +8,7 @@ import { clsn } from '../helpers/color'
 import { ChatFeaturesProvider } from '../context/chatFeaturesContext';
 import uuid from '../helpers/uuid';
 import { Link } from 'react-router-dom';
+import { Auth } from '../firebase.config';
 
 const Navbar: React.FC = () => {
   const { getNewRoomUrl } = React.useContext(RoomContext);
@@ -115,23 +116,50 @@ const Section: React.FC<{white?: boolean}> = ({ white, children }) => {
 }
 
 export const Home: React.FC = () => {
-  const [authorId] = React.useState(uuid());
-  return (
+  const [authorId, setAuthorId] = React.useState<string>(uuid());
+  const [isAnonymous, setIsAnonymous] = React.useState(true);
+
+  React.useEffect(() => {
+    Auth.onAuthStateChanged((user) => {
+      if (user) {
+        const isAnonymous = user.isAnonymous;
+        const uid = user.uid;
+        setAuthorId(uid)
+        setIsAnonymous(isAnonymous)
+        console.log(`User ${uid} is logged in`)
+      } else {
+        // logged out
+        if (!authorId) {
+          // was not loggedin
+        } else if (isAnonymous) {
+          // Anonymous just want to leave or logged out
+        } else {
+          alert(`Good bye ${authorId}`)
+        }
+      }
+    });
+
+    Auth.signInAnonymously().catch((error) => {
+      console.error(`Firebase Anonymous Login: Code ${error.code}: ${error.message}`)
+
+      setAuthorId(uuid())
+    })
+  }, [])
+
+  return authorId ? (
     <RoomProvider authorId={authorId} roomId="home" peopleInRoom={0}>
       <div className="home">
         <Section white>
           <Navbar />
           <Hero />
         </Section>
-
         <Section>
           <Features />
         </Section>
-
         <Section white>
           <Footer />
         </Section>
       </div>
     </RoomProvider>
-  )
+  ) : <div />;
 }
