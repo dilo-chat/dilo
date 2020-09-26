@@ -30,7 +30,7 @@ render(
       <Route
         exact={true}
         path="/o"
-        render={() => <Rooms />}
+        render={() => <Rooms userId={userId} />}
       />
       <Route
         exact={true}

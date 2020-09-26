@@ -1,4 +1,4 @@
-import { initializeApp, auth } from 'firebase'
+import { initializeApp, auth, firestore } from 'firebase'
 
 const firebaseConfig = {
   apiKey: "AIzaSyDC8ajeqJR30bdcguHXOPxSRlJo2sfY3Mg",
@@ -13,6 +13,15 @@ const firebaseConfig = {
  const FirebaseApp = initializeApp(firebaseConfig)
 
  const Auth = auth(FirebaseApp)
+
+ const FireStore = firestore(FirebaseApp)
+
+ const DB = {
+  'user': FireStore.collection('user'),
+  'publicRoom': FireStore.collection('publicRoom'),
+  runTransaction: FireStore.runTransaction
+ }
+
  console.log({ FirebaseApp, Auth })
 
- export { Auth }
+ export { Auth, DB }

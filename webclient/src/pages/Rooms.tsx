@@ -1,12 +1,18 @@
 import * as React from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { colorFromUuid } from '../helpers/color'
-import { getData } from '../store'
+import { getAllRooms } from '../store'
 import './Rooms.css'
 
 
-export const Rooms = () => {
-  const rooms: string[] = Object.keys(getData().rooms)
+export const Rooms = ({ userId }: {userId: string}) => {
+  const [rooms, setRooms] = React.useState<string[]>([])
+
+  React.useEffect(() => {
+    getAllRooms(userId).then(
+      x => setRooms(Object.keys(x.rooms))
+    )
+  }, [])
 
   return <div className="room">
     <ul className="rooms__list">{

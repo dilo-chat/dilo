@@ -1,12 +1,13 @@
+import { DB } from '../firebase.config'
 import uuid, { UUID } from '../helpers/uuid'
 
 const key = 'dilo'
 
-type Data = {
+export type Data = {
   rooms: { [roomId: string]: RoomData};
 }
 
-type RoomData = {
+export type RoomData = {
   authorId: string;
   authorName?: string;
 }
@@ -35,24 +36,37 @@ const setData = (data: Data): Data => {
   }
 }
 
-export const addRoom = (roomId: string, roomData: RoomData): Data => {
-  const data = getData()
+export const addRoom = async (userId: string, roomId: string, roomData: RoomData): Promise<void> => {
+  const userRef =  DB.user.doc(userId)
 
-  data.rooms = data.rooms || {}
-  data.rooms[roomId] = roomData
-
-  return setData(data)
+  await userRef.collection('publicRooms').doc(roomId).set(roomData)
 }
 
-export const getRoomData = (roomId: string): RoomData | undefined => {
-  const data = getData()
-  data.rooms = data.rooms || {}
-  return data.rooms[roomId]
+export const getAllRooms = async (userId: string): Promise<Data> => {
+  return DB.user.doc(userId).collection('publicRooms').get().then(
+    x => x.docs.reduce((acc, current) => ({
+      ...acc,
+      [current.id]: current.data as any
+    }), {})
+  ).then(
+    data => ({
+      rooms: data
+    })
+  )
 }
 
-export const getOrInitRoomData = (roomId: string): RoomData => {
-  if (getRoomData(roomId)) return getRoomData(roomId)!
+export const getRoomData = async (userId: string, roomId: string): Promise<RoomData | undefined> => {
+  const userRef =  DB.user.doc(userId)
+  return (await userRef.collection('publicRooms').doc(roomId).get())?.data as any
+}
 
-  addRoom(roomId, { authorId: uuid(), authorName: undefined })
-  return getRoomData(roomId)!
+export const getOrInitRoomData = async (userId: string, roomId: string): Promise<RoomData> => {
+  const room = await getRoomData(userId, roomId)
+
+  if (room) {
+    return room
+  } else {
+    await addRoom(userId, roomId, { authorId: uuid(), authorName: undefined })
+    return { authorId: uuid(), authorName: undefined }
+  }
 }
