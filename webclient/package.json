@@ -5,12 +5,14 @@
   "main": "src/index.html",
   "license": "MIT",
   "scripts": {
-    "start": "parcel src/index.html --open",
-    "build": "parcel build src/index.html",
+    "start": "npm run copyToPublic; parcel src/index.html --open",
+    "build": "parcel build src/index.html; npm run copyToPublic",
+    "copyToPublic": "cp -r public/* dist/",
     "type-check": "tsc --noEmit",
     "type-check:watch": "tsc --noEmit --watch"
   },
   "dependencies": {
+    "firebase": "^7.22.1",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
     "react-router-dom": "^5.2.0"

@@ -8,11 +8,14 @@ import { RoomProvider } from './context/roomContext'
 import { getOrInitRoomData } from './store'
 import { Link } from 'react-router-dom'
 import { RoomSetupContext } from './context/roomSetupContext'
+import { NotificationsProvider } from './context/NotificationsContext'
 
 const App: React.FC<{ roomId: string }> = ({ roomId }) => {
   const { authorId, authorName } = getOrInitRoomData(roomId)
 
   return (
+    <>
+    <NotificationsProvider></NotificationsProvider>
     <RoomProvider authorId={authorId} authorName={authorName} roomId={roomId} peopleInRoom={0}>
       <div className="room">
         <div className="top-bar">
@@ -30,6 +33,7 @@ const App: React.FC<{ roomId: string }> = ({ roomId }) => {
         <Chat />
       </div>
     </RoomProvider>
+    </>
   );
 }
 
